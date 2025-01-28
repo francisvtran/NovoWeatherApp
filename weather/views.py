@@ -12,9 +12,11 @@ def index(request):
     if not appid:
         raise ValueError("OpenWeatherMap API key is not set. Check your settings.")
 
-    cities = City.objects.all()
+    cities = City.objects.all().order_by('-id')
 
-    zip_code = '20810,us'
+    if request.method == 'POST': 
+        form = CityForm(request.POST) 
+        form.save() 
 
     form = CityForm()
 
@@ -22,7 +24,7 @@ def index(request):
 
     for city in cities:
 
-        city_weather = requests.get(url.format(zip_code) + f"&appid={appid}").json()
+        city_weather = requests.get(url.format(f"{city.zip_code},us") + f"&appid={appid}").json()
 
         weather = {
             'city' : city_weather['name'],
