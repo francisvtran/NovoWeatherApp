@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.conf import settings
 from .models import City
+from .forms import CityForm
 import requests
 
 def index(request):
@@ -14,6 +15,8 @@ def index(request):
     cities = City.objects.all()
 
     zip_code = '20810,us'
+
+    form = CityForm()
 
     weather_data = []
 
@@ -30,6 +33,6 @@ def index(request):
 
         weather_data.append(weather)
 
-    context = {'weather_data' : weather_data}
+    context = {'weather_data' : weather_data, 'form' : form}
 
     return render(request, 'weather/index.html', context)
