@@ -26,6 +26,9 @@ SECRET_KEY = config('MY_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+#OpenWeatherMap API Key
+OWM_API_KEY = config('OWM_API_KEY')
+
 ALLOWED_HOSTS = []
 
 
