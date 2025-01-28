@@ -10,10 +10,17 @@ def index(request):
     if not appid:
         raise ValueError("OpenWeatherMap API key is not set. Check your settings.")
 
-    city = 'Bethesda'
+    zip_code = '20810,us'
 
-    city_weather = requests.get(url.format(city) + f"&appid={appid}").json()
+    city_weather = requests.get(url.format(zip_code) + f"&appid={appid}").json()
 
-    print(city_weather)  #comment this out later
+    weather = {
+        'city' : city_weather['name'],
+        'temp_min' : city_weather['main']['temp_min'],
+        'temp_max' : city_weather['main']['temp_max'],
+        'icon' : city_weather['weather'][0]['icon']
+    }
 
-    return render(request, 'weather/index.html')
+    context = {'weather' : weather}
+
+    return render(request, 'weather/index.html', context)

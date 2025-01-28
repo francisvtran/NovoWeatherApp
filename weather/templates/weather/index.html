@@ -45,16 +45,18 @@
                         <article class="media">
                             <div class="media-left">
                                 <figure class="image is-50x50">
-                                    <img src="http://openweathermap.org/img/w/10d.png" alt="Image">
+                                    <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="Image">
                                 </figure>
                             </div>
                             <div class="media-content">
                                 <div class="content">
                                     <p>
-                                        <span class="title">Bethesda</span>
+                                        <span class="title">{{ weather.city }}</span>
                                         <br>
-                                        <span class="subtitle">29° F</span>
-                                        <br> thunderstorm with heavy rain
+                                        <span class="subtitle">Today's High: {{ weather.temp_max }} F</span>
+                                        <br> 
+                                        <span class="subtitle">Today's Low: {{ weather.temp_min }} F</span>
+                                        <br> 
                                     </p>
                                 </div>
                             </div>
