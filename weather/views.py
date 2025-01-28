@@ -6,7 +6,6 @@ import requests
 
 def index(request):
     url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial'
-    
     appid = settings.OWM_API_KEY
 
     if not appid:
@@ -16,12 +15,14 @@ def index(request):
 
     if request.method == 'POST': 
         form = CityForm(request.POST) 
-        form.save() 
-
-    form = CityForm()
+        if form.is_valid():
+            form.save() 
+        else:
+            form = CityForm(request.POST)
+    else:
+        form = CityForm()
 
     weather_data = []
-
     for city in cities:
 
         city_weather = requests.get(url.format(f"{city.zip_code},us") + f"&appid={appid}").json()
@@ -32,9 +33,7 @@ def index(request):
             'temp_max' : city_weather['main']['temp_max'],
             'icon' : city_weather['weather'][0]['icon']
         }
-
         weather_data.append(weather)
 
     context = {'weather_data' : weather_data, 'form' : form}
-
     return render(request, 'weather/index.html', context)
