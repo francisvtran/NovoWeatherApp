@@ -30,7 +30,7 @@ def index(request):
                 City.objects.create(name=city_name, zip_code=zip_code)
 
             else:
-                error_message = "Invalid ZIP Code. Please enter a valid U.S. ZIP Code."
+                error_message = "ZIP Code does not exist. Please enter a valid U.S. ZIP Code."
 
     else:
         form = CityForm()
