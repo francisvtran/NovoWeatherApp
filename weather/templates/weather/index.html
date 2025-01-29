@@ -31,6 +31,9 @@
                         <div class="field has-addons">
                             <div class="control is-expanded">
                                 {{ form.zip_code }}
+                                {% if error_message %}
+                                    <p class="help is-danger">{{ error_message }}</p>
+                                {% endif %}
                                 {% if form.zip_code.errors %}
                                     <p class="help is-danger">{{ form.zip_code.errors.0 }}</p>
                                 {% endif %}

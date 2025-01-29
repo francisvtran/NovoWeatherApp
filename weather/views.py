@@ -12,13 +12,26 @@ def index(request):
         raise ValueError("OpenWeatherMap API key is not set. Check your settings.")
 
     cities = City.objects.all().order_by('-id')
+    error_message = None
 
     if request.method == 'POST': 
         form = CityForm(request.POST) 
         if form.is_valid():
-            form.save() 
-        else:
-            form = CityForm(request.POST)
+            zip_code = form.cleaned_data['zip_code']
+
+            # Fetch city name from API
+            response = requests.get(url.format(f"{zip_code},us") + f"&appid={appid}")
+
+            if response.status_code == 200:
+                city_weather = response.json()
+                city_name = city_weather.get('name', 'Unknown City')  # Default to 'Unknown City' if missing
+                
+                # Save city with name and ZIP code
+                City.objects.create(name=city_name, zip_code=zip_code)
+
+            else:
+                error_message = "Invalid ZIP Code. Please enter a valid U.S. ZIP Code."
+
     else:
         form = CityForm()
 
@@ -66,6 +79,6 @@ def index(request):
                 'icon': None
                 })
 
-    context = {'weather_data' : weather_data, 'form' : form}
+    context = {'weather_data' : weather_data, 'form' : form, 'error_message': error_message}
     return render(request, 'weather/index.html', context)
 
