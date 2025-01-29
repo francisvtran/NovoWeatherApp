@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.css" />
 </head>
 <body>
-    <section class="hero is-primary">
+    <section class="hero" style="background-color: #162f7f;">
         <div class="hero-body">
             <div class="container">
                 <div class="columns is-vcentered">
@@ -16,7 +16,7 @@
                       <img src="https://www.novoco.com/static/images/novo-logo.c4b0a658629e.png" alt="">
                     </div>
                     <div class="column">
-                <h1 class="title">
+                <h1 class="title has-text-right" style= "color: white;">
                     What's the weather like?
                 </h1>
             </div>
@@ -31,6 +31,12 @@
                         <div class="field has-addons">
                             <div class="control is-expanded">
                                 {{ form.zip_code }}
+                                {% if error_message %}
+                                    <p class="help is-danger">{{ error_message }}</p>
+                                {% endif %}
+                                {% if form.zip_code.errors %}
+                                    <p class="help is-danger">{{ form.zip_code.errors.0 }}</p>
+                                {% endif %}
                             </div>
                             <div class="control">
                                 <button class="button is-info">
@@ -51,9 +57,11 @@
                     <div class="box">
                         <article class="media">
                             <div class="media-left">
+                                {% if weather.icon %}
                                 <figure class="image is-50x50">
                                     <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="Image">
                                 </figure>
+                                {% endif %}
                             </div>
                             <div class="media-content">
                                 <div class="content">
