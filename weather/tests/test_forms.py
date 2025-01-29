@@ -33,7 +33,7 @@ class CityFormTest(TestCase):
 
     def test_duplicate_zip_code(self):
         # First, save a valid ZIP code to the database
-        form = CityForm(data={'zip_code': '20810'})
+        form = CityForm(data={name="Test City", 'zip_code': '20810'})
         if form.is_valid():
             form.save()
         # Attempt to save the same ZIP code again
