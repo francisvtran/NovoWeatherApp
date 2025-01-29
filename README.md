@@ -8,7 +8,7 @@ To run all tests, run the following command
 python manage.py test
 ```
 
-For sepcific test files, run these commands
+For specific test files, run these commands
 
 ```bash
 python manage.py test weather.tests.test_forms
