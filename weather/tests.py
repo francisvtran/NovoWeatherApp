@@ -11,25 +11,25 @@ class CityFormTest(TestCase):
         form = CityForm(data={'zip_code': 'ABCDE'})  
         self.assertFalse(form.is_valid())
         self.assertIn('zip_code', form.errors)
-        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit ZIP Code.")
+        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit U.S. ZIP Code.")
 
     def test_invalid_zip_code_non_numeric_symbols(self):
         form = CityForm(data={'zip_code': '!@#$%'})  
         self.assertFalse(form.is_valid())
         self.assertIn('zip_code', form.errors)
-        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit ZIP Code.")
+        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit U.S. ZIP Code.")
 
     def test_invalid_zip_code_short(self):
         form = CityForm(data={'zip_code': '123'})  
         self.assertFalse(form.is_valid())
         self.assertIn('zip_code', form.errors)
-        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit ZIP Code.")
+        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit U.S. ZIP Code.")
 
     def test_invalid_zip_code_long(self):
         form = CityForm(data={'zip_code': '123'})  
         self.assertFalse(form.is_valid())
         self.assertIn('zip_code', form.errors)
-        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit ZIP Code.")
+        self.assertEqual(form.errors['zip_code'][0], "Enter a valid 5-digit U.S. ZIP Code.")
 
     def test_duplicate_zip_code(self):
         # First, save a valid ZIP code to the database
