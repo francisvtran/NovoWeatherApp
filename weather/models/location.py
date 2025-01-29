@@ -1,11 +1,11 @@
 from django.core.exceptions import ValidationError
 from django.db import models
 
-class City(models.Model):
+class Location(models.Model):
     name = models.CharField(max_length=25)
     zip_code = models.CharField(max_length=5, default='00000', unique = True)
 
-    def __str__(self): #show the actual city name on the dashboard
+    def __str__(self): #show the actual name of the location on the dashboard
         return self.name
     
     def clean(self):

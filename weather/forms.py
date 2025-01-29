@@ -1,11 +1,11 @@
 from django import forms
 from django.forms import ModelForm, TextInput
-from weather.models.models import City
+from weather.models.location import Location
 
 
 class CityForm(ModelForm):
     class Meta:
-        model = City
+        model = Location
         fields = ['zip_code']
         widgets = {
             'zip_code': TextInput(attrs={'class' : 'input', 'placeholder' : 'Enter Valid U.S. ZIP Code'}),
@@ -22,7 +22,7 @@ class CityForm(ModelForm):
         if not zip_code.isdigit() or len(zip_code) != 5:
             raise forms.ValidationError("Enter a valid 5-digit U.S. ZIP Code.")
         
-        if City.objects.filter(zip_code=zip_code).exists():
+        if Location.objects.filter(zip_code=zip_code).exists():
             raise forms.ValidationError("This ZIP Code is already added.")
     
         return zip_code
