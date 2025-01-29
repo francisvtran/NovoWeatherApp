@@ -1,7 +1,8 @@
 from django.shortcuts import render
 from django.conf import settings
-from .models import City
-from .forms import CityForm
+from weather.models.models import City
+from weather.models.locationdto import LocationDTO
+from weather.forms import CityForm
 import requests
 
 def index(request):
@@ -35,7 +36,7 @@ def index(request):
     else:
         form = CityForm()
 
-    weather_data = []
+    weather_data: list[LocationDTO] = []
     for city in cities:
         response = requests.get(url.format(f"{city.zip_code},us") + f"&appid={appid}")
     
@@ -44,7 +45,7 @@ def index(request):
 
             # Check if the API response contains the required keys
             if 'name' in city_weather and 'main' in city_weather and 'weather' in city_weather:
-                weather = {
+                weather: LocationDTO = {
                     'city': city_weather['name'],
                     'temp_min': city_weather['main']['temp_min'],
                     'temp_max': city_weather['main']['temp_max'],

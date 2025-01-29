@@ -1,6 +1,6 @@
 from django import forms
 from django.forms import ModelForm, TextInput
-from .models import City
+from weather.models.models import City
 
 
 class CityForm(ModelForm):
@@ -18,6 +18,7 @@ class CityForm(ModelForm):
     def clean_zip_code(self):
         zip_code = self.cleaned_data.get('zip_code')
 
+        #Validates 5-digit ZIP code
         if not zip_code.isdigit() or len(zip_code) != 5:
             raise forms.ValidationError("Enter a valid 5-digit U.S. ZIP Code.")
         
