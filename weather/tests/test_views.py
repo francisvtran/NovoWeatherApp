@@ -3,7 +3,6 @@ from weather.models import City
 from django.urls import reverse
 
 #Views Unit Tests to simulate GET and POST requests
-
 class IndexViewTest(TestCase):
     def setUp(self):
         self.client = Client()

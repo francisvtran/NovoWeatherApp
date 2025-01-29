@@ -2,7 +2,7 @@ from django.test import TestCase
 from weather.models import City
 from django.core.exceptions import ValidationError
 
-#Models Unit Tests
+#Models Unit Tests testing behavior of City model
 class CityModelTest(TestCase):
     #Does __str__ correctly return the city name?
     def test_city_str_method(self):
