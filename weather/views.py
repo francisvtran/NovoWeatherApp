@@ -1,84 +1,62 @@
 from django.shortcuts import render
 from django.conf import settings
-from .models import City
-from .forms import CityForm
+from weather.models.location import Location
+from weather.forms import LocationForm
+import datetime
 import requests
+import logging
 
-def index(request):
-    url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial'
-    appid = settings.OWM_API_KEY
+logger =  logging.getLogger(__name__)
+url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial'
+appid = settings.OWM_API_KEY
+
+def save_weather_data(zip_code: str):
+    """This is an example of an API response for Houston, TX
+    {"coord":{"lon":-95.3633,"lat":29.7633},"weather":[{"id":701,"main":"Mist","description":"mist","icon":"50n"}],
+    "base":"stations","main":{"temp":66.36,"feels_like":67.03,"temp_min":62.58,"temp_max":69.21,"pressure":1015,
+    "humidity":92,"sea_level":1015,"grnd_level":1012},"visibility":4023,"wind":{"speed":11.5,"deg":130},"clouds":
+    {"all":100},"dt":1738198209,"sys":{"type":2,"id":2001415,"country":"US","sunrise":1738156368,"sunset":1738194977}
+    ,"timezone":-21600,"id":4699066,"name":"Houston","cod":200}"""
 
     if not appid:
         raise ValueError("OpenWeatherMap API key is not set. Check your settings.")
+    
+    # Fetch city name from API
+    response = requests.get(url.format(f"{zip_code},us") + f"&appid={appid}")
 
-    cities = City.objects.all().order_by('-id')
+    if response.status_code == 200:
+        city_weather = response.json()
+        city_name = city_weather.get('name', 'Unknown City')  # Default to 'Unknown City' if missing
+        try:
+            city_temp_min = city_weather['main']['temp_min']
+            city_temp_max = city_weather['main']['temp_max']
+            city_icon = city_weather['weather'][0]['icon']
+        except KeyError as e:
+            logger.error(f"Data was not as expected. {e}")
+            raise e
+    
+        # Save city with name and ZIP code
+        Location.objects.create(name=city_name, zip_code=zip_code, temp_min=city_temp_min, temp_max=city_temp_max, icon=city_icon)
+
+    else:
+        raise RuntimeError("ZIP Code does not exist. Please enter a valid U.S. ZIP Code.")
+
+#index view 
+def index(request):
+    locations = Location.objects.filter(date=datetime.date.today()).order_by('-id') #initial query
     error_message = None
 
     if request.method == 'POST': 
-        form = CityForm(request.POST) 
+        form = LocationForm(request.POST) 
         if form.is_valid():
-            zip_code = form.cleaned_data['zip_code']
-
-            # Fetch city name from API
-            response = requests.get(url.format(f"{zip_code},us") + f"&appid={appid}")
-
-            if response.status_code == 200:
-                city_weather = response.json()
-                city_name = city_weather.get('name', 'Unknown City')  # Default to 'Unknown City' if missing
-                
-                # Save city with name and ZIP code
-                City.objects.create(name=city_name, zip_code=zip_code)
-
-            else:
-                error_message = "ZIP Code does not exist. Please enter a valid U.S. ZIP Code."
-
+            zip_code = form.cleaned_data['zip_code']   
+            try:
+                save_weather_data(zip_code)
+            except RuntimeError as err:
+                error_message = str(err)
     else:
-        form = CityForm()
+        form = LocationForm()
 
-    weather_data = []
-    for city in cities:
-        response = requests.get(url.format(f"{city.zip_code},us") + f"&appid={appid}")
-    
-        if response.status_code == 200:
-            city_weather = response.json()
-
-            # Check if the API response contains the required keys
-            if 'name' in city_weather and 'main' in city_weather and 'weather' in city_weather:
-                weather = {
-                    'city': city_weather['name'],
-                    'temp_min': city_weather['main']['temp_min'],
-                    'temp_max': city_weather['main']['temp_max'],
-                    'icon': city_weather['weather'][0]['icon']
-                }
-                weather_data.append(weather)
-
-            else:
-                # Handle incomplete or unexpected responses
-                weather_data.append({
-                    'city': f"Invalid data for {city.zip_code}",
-                    'temp_min': 'N/A',
-                    'temp_max': 'N/A',
-                    'icon': None
-                })
-                
-        else:
-            # Handle API errors (e.g., invalid ZIP code or server issues)
-            error_message = response.json().get('message', 'Unknown error')
-            if error_message == "city not found":
-                weather_data.append({
-                    'city': f"Error for {city.zip_code}: Invalid ZIP Code",
-                    'temp_min': 'N/A',
-                    'temp_max': 'N/A',
-                    'icon': None
-                })
-            else:
-                weather_data.append({
-                'city': f"Error for {city.zip_code}: {error_message}",
-                'temp_min': 'N/A',
-                'temp_max': 'N/A',
-                'icon': None
-                })
-
-    context = {'weather_data' : weather_data, 'form' : form, 'error_message': error_message}
+    context = {'locations' : locations, 'form' : form, 'error_message': error_message}
     return render(request, 'weather/index.html', context)
 

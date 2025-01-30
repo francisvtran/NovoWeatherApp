@@ -53,24 +53,24 @@
         <div class="container">
             <div class="columns">
                 <div class="column is-offset-4 is-4">
-                     {% for weather in weather_data %}
+                     {% for location in locations %}
                     <div class="box">
                         <article class="media">
                             <div class="media-left">
-                                {% if weather.icon %}
+                                {% if location.icon %}
                                 <figure class="image is-50x50">
-                                    <img src="http://openweathermap.org/img/w/{{ weather.icon }}.png" alt="Image">
+                                    <img src="http://openweathermap.org/img/w/{{ location.icon }}.png" alt="Image">
                                 </figure>
                                 {% endif %}
                             </div>
                             <div class="media-content">
                                 <div class="content">
                                     <p>
-                                        <span class="title">{{ weather.city }}</span>
+                                        <span class="title">{{ location.name }}</span>
                                         <br>
-                                        <span class="subtitle">Today's High: {{ weather.temp_max }} F</span>
+                                        <span class="subtitle">Today's High: {{ location.temp_max }} °F</span>
                                         <br> 
-                                        <span class="subtitle">Today's Low: {{ weather.temp_min }} F</span>
+                                        <span class="subtitle">Today's Low: {{ location.temp_min }} °F</span>
                                         <br> 
                                     </p>
                                 </div>

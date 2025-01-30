@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import City
+from weather.models.location import Location
 
-admin.site.register(City)
+admin.site.register(Location)
