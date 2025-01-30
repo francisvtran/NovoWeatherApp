@@ -1,6 +1,7 @@
 from django.test import TestCase, Client
 from weather.models.location import Location
 from django.urls import reverse
+from unittest.mock import patch
 
 class IndexViewTest(TestCase):
     def setUp(self):
@@ -31,3 +32,4 @@ class IndexViewTest(TestCase):
         response = self.post_zip_code('00000')
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, 'ZIP Code does not exist. Please enter a valid U.S. ZIP Code.')
+
