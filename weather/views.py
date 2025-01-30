@@ -1,7 +1,6 @@
 from django.shortcuts import render
 from django.conf import settings
 from weather.models.location import Location
-from weather.models.locationdto import LocationDTO
 from weather.forms import LocationForm
 import datetime
 import requests
