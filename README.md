@@ -13,15 +13,18 @@ The app has been designed with a balance between usability and efficient resourc
 
 ## Setup and Installation
 
-1. Clone this GitHub repository using either the link or with GitHub Desktop.
+1. Clone this GitHub repository using the URL or with GitHub Desktop.
 
+2. Go to the directory where the project is installed.
+
+2. Next, run 
 ```bash
-  npm install my-project
-  cd my-project
+pip install-r requirements.txt
 ```
-
-2. Next, 
-    
+or run
+```bash
+pipenv install
+```
 ## Run Locally
 
 Once in the project directory, use:
