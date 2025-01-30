@@ -34,7 +34,7 @@ python manage.py runserver
 ```
 to start the server.
 
-You should be all set to start inputting ZIP codes and seeing weather in different locations!
+You should be all set to start inputting ZIP codes and see weather in different locations!
 ## Running Tests
 
 To run all tests, run the following command
