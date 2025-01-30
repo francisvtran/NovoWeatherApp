@@ -31,5 +31,5 @@ class IndexViewTest(TestCase):
     def test_index_view_post_invalid_zip_code_nonexistent(self):
         response = self.post_zip_code('00000')
         self.assertEqual(response.status_code, 200)
-        self.assertContains(response, 'ZIP Code does not exist. Please enter a valid U.S. ZIP Code.')
+        self.assertContains(response, 'Location not found. Please enter a valid U.S. ZIP Code.')
 

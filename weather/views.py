@@ -12,7 +12,7 @@ API_KEY = settings.OWM_API_KEY
 
 
 def fetch_weather_data(zip_code: str):
-    """This is an example of an API response for Houston, TX
+    """This is an example of an API response for 77407
     {"coord":{"lon":-95.3633,"lat":29.7633},"weather":[{"id":701,"main":"Mist","description":"mist","icon":"50n"}],
     "base":"stations","main":{"temp":66.36,"feels_like":67.03,"temp_min":62.58,"temp_max":69.21,"pressure":1015,
     "humidity":92,"sea_level":1015,"grnd_level":1012},"visibility":4023,"wind":{"speed":11.5,"deg":130},"clouds":
