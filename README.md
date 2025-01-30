@@ -19,9 +19,9 @@ The app has been designed with a balance between usability and efficient resourc
 
 2. Next, run 
 ```bash
-pip install-r requirements.txt
+pip install -r requirements.txt
 ```
-or run
+or
 ```bash
 pipenv install
 ```
