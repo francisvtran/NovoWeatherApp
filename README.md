@@ -63,7 +63,7 @@ coverage report -m
 
 For a more detailed report, run:
 ```bash
-coverage report -m
+coverage html
 ```
 and to open it, run:
 ```bash
