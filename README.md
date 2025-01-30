@@ -46,6 +46,7 @@ python manage.py test
 For specific test files, run these commands
 
 ```bash
+python manage.py test weather.tests.test_api
 python manage.py test weather.tests.test_forms
 python manage.py test weather.tests.test_views
 python manage.py test weather.tests.test_models
