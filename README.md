@@ -51,6 +51,25 @@ python manage.py test weather.tests.test_views
 python manage.py test weather.tests.test_models
 
 ```
+If  you want to run tests with code coverage, use the following:
+```bash
+coverage run --source='.' manage.py test
+```
+
+To generate a coverage report, run:
+```bash
+coverage report -m
+```
+
+For a more detailed report, run:
+```bash
+coverage report -m
+```
+and to open it, run:
+```bash
+start htmlcov/index.html
+```
+
 ## Documentation
 
 [NovoWeatherApp Documentation](https://github.com/francisvtran/NovoWeatherApp/blob/main/Novogradac_Take_Home_Assessment_Documentation.pdf)
