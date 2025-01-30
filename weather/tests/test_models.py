@@ -8,11 +8,12 @@ class LocationModelTest(TestCase):
         self.city = Location.objects.create(name='Bethesda', zip_code='20810', temp_min=50, temp_max=75)
 
     def test_city_str_method(self):
+        """Verifies __str__() method correctly returns city name when object is converted to string"""
         city = Location.objects.create(name='Bethesda', zip_code='20810', temp_min=55, temp_max=80)
-        self.assertEqual(str(city), 'Bethesda')
+        self.assertEqual(str(city), 'Bethesda') #Calls str(city), then compares to 'Bethesda'
         
-
     def test_create_location(self):
+        """Tests creating multiple locations"""
         location = Location.objects.create(name='Rockville', zip_code='20852', temp_min=60, temp_max=85)
         self.assertIsInstance(location, Location)
         self.assertEqual(location.zip_code, '20852')
