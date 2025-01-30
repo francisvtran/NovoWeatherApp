@@ -7,7 +7,7 @@ It is built on Django and SQLite to maintain an efficient, minimal, and lightwei
 
 The OpenWeatherMap's Current Weather API is integrated seamlessly for accurate and up-to-date weather information across the United States.
 
-The app has been designed with a balance between usability and efficient resource use in mind. Efforts have been taken to both reduce API calls and still allow users to access often-searched queries through caching and form validation.
+The app has been designed with a balance between usability and efficient resource use in mind. Efforts have been taken to both reduce API calls and still allow users to access often-searched queries through caching.
 
 
 
