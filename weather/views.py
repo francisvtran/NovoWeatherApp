@@ -31,12 +31,13 @@ def save_weather_data(zip_code: str):
         try:
             city_temp_min = city_weather['main']['temp_min']
             city_temp_max = city_weather['main']['temp_max']
+            city_icon = city_weather['weather'][0]['icon']
         except KeyError as e:
             logger.error(f"Data was not as expected. {e}")
             raise e
     
         # Save city with name and ZIP code
-        Location.objects.create(name=city_name, zip_code=zip_code, temp_min=city_temp_min, temp_max=city_temp_max)
+        Location.objects.create(name=city_name, zip_code=zip_code, temp_min=city_temp_min, temp_max=city_temp_max, icon=city_icon)
 
     else:
         raise RuntimeError("ZIP Code does not exist. Please enter a valid U.S. ZIP Code.")
