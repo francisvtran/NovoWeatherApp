@@ -1,9 +1,14 @@
 from django.core.exceptions import ValidationError
+import datetime
 from django.db import models
 
 class Location(models.Model):
-    name = models.CharField(max_length=25)
-    zip_code = models.CharField(max_length=5, default='00000', unique = True)
+    name = models.CharField(max_length=25, help_text="Name of this location.")
+    zip_code = models.CharField(max_length=5, default='', unique=True, null=False, blank=True)
+    temp_min = models.FloatField(null=True)
+    temp_max = models.FloatField(null=True)
+    icon = models.CharField(max_length=256, default='', null=False, blank=True)
+    date = models.DateField(default=datetime.date.today)
 
     def __str__(self): #show the actual name of the location on the dashboard
         return self.name
@@ -17,6 +22,3 @@ class Location(models.Model):
         #Override save method to enforce validation.
         self.full_clean()  # Calls the clean() method before saving
         super().save(*args, **kwargs)
-
-    class Meta: #show the plural of city as cities instead of citys
-        verbose_name_plural = 'cities'

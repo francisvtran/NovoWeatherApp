@@ -2,40 +2,23 @@ from django.shortcuts import render
 from django.conf import settings
 from weather.models.location import Location
 from weather.models.locationdto import LocationDTO
-from weather.forms import CityForm
+from weather.forms import LocationForm
+import datetime
 import requests
+import logging
 
+logger =  logging.getLogger(__name__)
 url = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial'
 appid = settings.OWM_API_KEY
 
-def get_weather_data(locations: list[Location]) -> list[LocationDTO]:
-    weather_data: list[LocationDTO] = []
-    for location in locations:
-        response = requests.get(url.format(f"{location.zip_code},us") + f"&appid={appid}")
-    
-        if response.status_code == 200:
-            city_weather = response.json()
-
-            # Check if the API response contains the required keys
-            if 'name' in city_weather and 'main' in city_weather and 'weather' in city_weather:
-                weather: LocationDTO = {
-                    'city': city_weather['name'],
-                    'temp_min': city_weather['main']['temp_min'],
-                    'temp_max': city_weather['main']['temp_max'],
-                    'icon': city_weather['weather'][0]['icon']
-                }
-                weather_data.append(weather)
-
-            else:
-                # Handle incomplete or unexpected responses
-                raise RuntimeError(f"Invalid data for {location.zip_code}")
-                
-        else:
-            # Handle API errors (e.g., invalid ZIP code or server issues)
-            raise RuntimeError(response.json().get('message', 'Unknown error'))
-    return weather_data
-
 def save_weather_data(zip_code: str):
+    """This is an example of an API response for Houston, TX
+    {"coord":{"lon":-95.3633,"lat":29.7633},"weather":[{"id":701,"main":"Mist","description":"mist","icon":"50n"}],
+    "base":"stations","main":{"temp":66.36,"feels_like":67.03,"temp_min":62.58,"temp_max":69.21,"pressure":1015,
+    "humidity":92,"sea_level":1015,"grnd_level":1012},"visibility":4023,"wind":{"speed":11.5,"deg":130},"clouds":
+    {"all":100},"dt":1738198209,"sys":{"type":2,"id":2001415,"country":"US","sunrise":1738156368,"sunset":1738194977}
+    ,"timezone":-21600,"id":4699066,"name":"Houston","cod":200}"""
+
     if not appid:
         raise ValueError("OpenWeatherMap API key is not set. Check your settings.")
     
@@ -45,20 +28,26 @@ def save_weather_data(zip_code: str):
     if response.status_code == 200:
         city_weather = response.json()
         city_name = city_weather.get('name', 'Unknown City')  # Default to 'Unknown City' if missing
-                
+        try:
+            city_temp_min = city_weather['main']['temp_min']
+            city_temp_max = city_weather['main']['temp_max']
+        except KeyError as e:
+            logger.error(f"Data was not as expected. {e}")
+            raise e
+    
         # Save city with name and ZIP code
-        Location.objects.create(name=city_name, zip_code=zip_code)
+        Location.objects.create(name=city_name, zip_code=zip_code, temp_min=city_temp_min, temp_max=city_temp_max)
 
     else:
         raise RuntimeError("ZIP Code does not exist. Please enter a valid U.S. ZIP Code.")
 
+#index view 
 def index(request):
-    locations = Location.objects.all().order_by('-id')
+    locations = Location.objects.filter(date=datetime.date.today()).order_by('-id') #initial query
     error_message = None
-    weather_data  = None
 
     if request.method == 'POST': 
-        form = CityForm(request.POST) 
+        form = LocationForm(request.POST) 
         if form.is_valid():
             zip_code = form.cleaned_data['zip_code']   
             try:
@@ -66,12 +55,8 @@ def index(request):
             except RuntimeError as err:
                 error_message = str(err)
     else:
-        form = CityForm()
+        form = LocationForm()
 
-    try:
-        weather_data = get_weather_data(locations)
-    except RuntimeError as err:
-        error_message += str(err)
-    context = {'weather_data' : weather_data, 'form' : form, 'error_message': error_message}
+    context = {'locations' : locations, 'form' : form, 'error_message': error_message}
     return render(request, 'weather/index.html', context)
 

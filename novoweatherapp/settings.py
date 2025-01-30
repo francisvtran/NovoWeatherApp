@@ -29,9 +29,6 @@ DEBUG = True
 #OpenWeatherMap API Key
 OWM_API_KEY = config('OWM_API_KEY')
 
-#API Ninjas Key
-API_NINJAS_KEY = config('API_NINJAS_KEY')
-
 ALLOWED_HOSTS = []
 
 

@@ -1,9 +1,10 @@
 from django import forms
 from django.forms import ModelForm, TextInput
+import datetime
 from weather.models.location import Location
 
 
-class CityForm(ModelForm):
+class LocationForm(ModelForm):
     class Meta:
         model = Location
         fields = ['zip_code']
@@ -12,7 +13,7 @@ class CityForm(ModelForm):
         } 
 
     def __init__(self, *args, **kwargs):
-        super(CityForm, self).__init__(*args, **kwargs)
+        super(LocationForm, self).__init__(*args, **kwargs)
         self.fields['zip_code'].initial = ''
 
     def clean_zip_code(self):
@@ -22,7 +23,7 @@ class CityForm(ModelForm):
         if not zip_code.isdigit() or len(zip_code) != 5:
             raise forms.ValidationError("Enter a valid 5-digit U.S. ZIP Code.")
         
-        if Location.objects.filter(zip_code=zip_code).exists():
+        if Location.objects.filter(zip_code=zip_code, date=datetime.date.today()).exists():
             raise forms.ValidationError("This ZIP Code is already added.")
     
         return zip_code
