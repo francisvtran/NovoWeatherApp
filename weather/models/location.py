@@ -4,7 +4,7 @@ from django.db import models
 
 class Location(models.Model):
     name = models.CharField(max_length=25, help_text="Name of this location.")
-    zip_code = models.CharField(max_length=5, default='', unique=True, null=False, blank=True)
+    zip_code = models.CharField(max_length=5, default='', null=False, blank=True)
     temp_min = models.FloatField(null=True)
     temp_max = models.FloatField(null=True)
     icon = models.CharField(max_length=256, default='', null=False, blank=True)
