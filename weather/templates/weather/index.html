@@ -68,11 +68,11 @@
                                     <p>
                                         <span class="title">{{ location.name }}</span>
                                         <br>
-                                        <span class="subtitle">{{ location.zip_code }}</span>  <!-- Display ZIP Code -->
+                                        <span class="subtitle">{{ location.zip_code }}</span> 
                                         <br>
-                                        <span class="subtitle">Today's High: {{ location.temp_max }} °F</span>
+                                        <span class="subtitle">{{ location.date|date:"F d" }}'s High: {{ location.temp_max }} °F</span>
                                         <br> 
-                                        <span class="subtitle">Today's Low: {{ location.temp_min }} °F</span>
+                                        <span class="subtitle">{{ location.date|date:"F d" }}'s Low: {{ location.temp_min }} °F</span>
                                         <br> 
                                     </p>
                                 </div>

@@ -7,17 +7,10 @@ import requests
 import logging
 
 logger = logging.getLogger(__name__)
-API_URL = 'http://api.openweathermap.org/data/2.5/weather?q={}&units=imperial'
+API_URL = 'http://api.openweathermap.org/data/2.5/forecast?q={}&units=imperial'
 API_KEY = settings.OWM_API_KEY
 
-
 def fetch_weather_data(zip_code: str):
-    """This is an example of an API response for 77407
-    {"coord":{"lon":-95.3633,"lat":29.7633},"weather":[{"id":701,"main":"Mist","description":"mist","icon":"50n"}],
-    "base":"stations","main":{"temp":66.36,"feels_like":67.03,"temp_min":62.58,"temp_max":69.21,"pressure":1015,
-    "humidity":92,"sea_level":1015,"grnd_level":1012},"visibility":4023,"wind":{"speed":11.5,"deg":130},"clouds":
-    {"all":100},"dt":1738198209,"sys":{"type":2,"id":2001415,"country":"US","sunrise":1738156368,"sunset":1738194977}
-    ,"timezone":-21600,"id":4699066,"name":"Houston","cod":200}"""
     if not API_KEY:
         logger.error("OpenWeatherMap API key is missing. Check your settings.")
         raise ValueError("Weather service unavailable. Please try again later.")
@@ -32,13 +25,21 @@ def fetch_weather_data(zip_code: str):
 
     try:
         #Returns a dictionary with city name, min temp, max temp, and icon.
-        city_weather = response.json()
-        return {
-            "name": city_weather.get("name", "Unknown City"),
-            "temp_min": city_weather["main"]["temp_min"],
-            "temp_max": city_weather["main"]["temp_max"],
-            "icon": city_weather["weather"][0]["icon"],
-        }
+        city_weather_object = response.json()
+        city_weather_list = city_weather_object.get("list")
+        city_name = city_weather_object.get("city").get("name")
+        city_return_list = []
+        for city_weather in city_weather_list:
+            city_date_txt = city_weather.get("dt_txt")
+            if "21:00:00" in city_date_txt:
+                city_return_list.append({
+                    "name": city_name,
+                    "temp_min": city_weather["main"]["temp_min"],
+                    "temp_max": city_weather["main"]["temp_max"],
+                    "icon": city_weather["weather"][0]["icon"],
+                    "date": city_weather["dt"]
+                })
+        return city_return_list
     #Raises ValueError or RuntimeError for API issues.
     except (KeyError, TypeError, ValueError) as e:
         logger.error(f"Invalid API response: {e}, Response: {response.text}")
@@ -51,15 +52,16 @@ def save_weather_data(zip_code: str):
     Handles errors gracefully.
     """
     try:
-        weather_data = fetch_weather_data(zip_code)
-        Location.objects.create(
-            name=weather_data["name"],
-            zip_code=zip_code,
-            temp_min=weather_data["temp_min"],
-            temp_max=weather_data["temp_max"],
-            icon=weather_data["icon"],
-            date=datetime.date.today(),
-        )
+        weather_data_list = fetch_weather_data(zip_code)
+        for weather_data in weather_data_list:
+            Location.objects.create(
+                name=weather_data["name"],
+                zip_code=zip_code,
+                temp_min=weather_data["temp_min"],
+                temp_max=weather_data["temp_max"],
+                icon=weather_data["icon"],
+                date=datetime.datetime.fromtimestamp(weather_data.get("date"))
+            )
     except RuntimeError as err:
         raise RuntimeError(str(err))
 
@@ -69,7 +71,7 @@ def index(request):
     Handles GET and POST requests for weather lookups.
     Fetches weather data based on ZIP code input.
     """
-    locations = Location.objects.filter(date=datetime.date.today()).order_by('-id')
+    locations = Location.objects.order_by('-id')
     error_message = None
 
     if request.method == 'POST':
